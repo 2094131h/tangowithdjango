@@ -5,7 +5,7 @@
     <head>
         <title>Rango</title>
     </head>
-
+    <a href="/rango/add_category/">Add a New Category</a><br />
     <body>
         <h1>Rango says..hello world!</h1>
         <a href="/rango/about/">About</a><br />
@@ -17,12 +17,16 @@
                 <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
-            <ul style="float:left;margin-right:20px;list-style-type: none;">
-                <li><h3>Top Pages</h3></li>
-                {% for page in top_five %}
-                <li><a href="{{ page.url }}">{{ page.title}} {{ page.views }}</a></li>
-                {% endfor %}
+           {% if top_five %}
+                <ul style="float:left;margin-right:20px;list-style-type: none;">
+                    <li><h3>Top Pages</h3></li>
+                    {% for page in top_five %}
+                        <li><a href="{{ page.url }}">{{ page.title}} {{ page.views }}</a></li>
+                    {% endfor %}
             </ul>
+            {% else %}
+                <strong>There are no pages present.</strong>
+            {% endif %}
        {% else %}
             <strong>There are no categories present.</strong>
        {% endif %}
