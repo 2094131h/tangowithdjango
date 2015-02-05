@@ -1,18 +1,12 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
-{% load staticfiles %} <!-- New line -->
+{% load staticfiles %}
 
-<html>
+{% block title %}{{ category_name }}{% endblock %}
 
-    <head>
-        <title>About</title>
-    </head>
-
-    <body>
+{% block body_block %}
         <h1>This tutorial has been put together by Craig Hamill 2094131h </h1>
          <strong>{{ aboutMessage }}</strong><br />
-        <a href='../'>Index</a><br />
+        <a href="{% url 'index' %}">Index</a><br />
         <img src="{% static 'images/sittingrango.jpg' %}" alt="Picture of Rango" /> <!-- New line -->
-    </body>
-
-</html>
+{% endblock %}

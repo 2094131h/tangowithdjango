@@ -1,38 +1,24 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
-{% load staticfiles %} <!-- New line -->
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
-    {% if user.is_authenticated %}
-        <a href="/rango/restricted/">Restricted Page</a><br />
-        <a href="/rango/logout/">Logout</a><br />
-        <a href="/rango/add_category/">Add a New Category</a><br />
-    {% else %}
-        <a href="/rango/register/">Register Here</a><br />
-        <a href="/rango/login/">Login</a><br />
-    {% endif %}
+{% load staticfiles %}
 
-    <a href="/rango/about/">About</a><br/>
+{% block title %}{{ category_name }}{% endblock %}
 
-    <body>
+{% block body_block %}
         {% if user.is_authenticated %}
             <h1>Rango says... hello {{ user.username }}!</h1>
         {% else %}
             <h1>Rango says... hello world!</h1>
         {% endif %}
-        <a href="/rango/about/">About</a><br />
         {% if categories %}
-            <ul style="float:left; list-style-type: none;">
+            <ul>
                 <li><h3>Categories</h3></li>
                 {% for category in categories %}
-                <!-- Following line changed to add an HTML hyperlink -->
-                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
-                {% endfor %}
+                   <li><a href="{% url 'category'  category.slug %}">{{ category.name }}</a></li>
+                 {% endfor %}
             </ul>
            {% if top_five %}
-                <ul style="float:left;margin-right:20px;list-style-type: none;">
+                <ul>
                     <li><h3>Top Pages</h3></li>
                     {% for page in top_five %}
                         <li><a href="{{ page.url }}">{{ page.title}} {{ page.views }}</a></li>
@@ -44,6 +30,4 @@
        {% else %}
             <strong>There are no categories present.</strong>
        {% endif %}
-        <img style="float:left; " src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" /> <!-- New line -->
-    </body>
-</html>
+{% endblock %}
