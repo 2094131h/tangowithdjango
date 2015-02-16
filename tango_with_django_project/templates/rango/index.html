@@ -17,10 +17,10 @@
                    <li><a href="{% url 'category'  category.slug %}">{{ category.name }}</a></li>
                  {% endfor %}
             </ul>
-           {% if top_five %}
+           {% if pages %}
                 <ul>
                     <li><h3>Top Pages</h3></li>
-                    {% for page in top_five %}
+                    {% for page in pages %}
                         <li><a href="{{ page.url }}">{{ page.title}} {{ page.views }}</a></li>
                     {% endfor %}
             </ul>
