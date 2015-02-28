@@ -5,11 +5,14 @@
 {% block title %}{{ category_name }}{% endblock %}
 
 {% block body_block %}
-    <h1>This tutorial has been put together by Craig Hamill 2094131h </h1>
-    {% if visits %}
-        <p>You have visited this site {{ visits }} times</p>
-    {% endif %}
-    <strong>{{ aboutMessage }}</strong><br />
-    <a href="{% url 'index' %}">Index</a><br />
-    <img src="{% static 'images/sittingrango.jpg' %}" alt="Picture of Rango" /> <!-- New line -->
+     <div class="page-header">
+        <h1>This tutorial has been put together by Craig Hamill 2094131h </h1>
+          </div>
+        {% if visits %}
+            <p>You have visited this site {{ visits }} times</p>
+        {% endif %}
+        <strong>{{ aboutMessage }}</strong><br />
+        <a href="{% url 'index' %}">Index</a><br />
+        <img width="300" height="200" src="{% static 'images/sittingrango.jpg' %}" alt="Picture of Rango" />
+
 {% endblock %}

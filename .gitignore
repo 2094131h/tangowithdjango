@@ -1,2 +1,6 @@
 *.pyc
 *.sqlite3
+tango_with_django_project/rango/admin.py~
+tango_with_django_project/rango/views.py~
+tango_with_django_project/templates/rango/about.html~
+tango_with_django_project/templates/rango/index.html~
