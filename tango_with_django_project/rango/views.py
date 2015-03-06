@@ -13,6 +13,7 @@ from datetime import datetime
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from django.views.decorators.csrf import csrf_protect
+from rango.bing_search import run_query
 
 @login_required
 def restricted(request):
@@ -197,4 +198,15 @@ def password_change_done(request, template_name='registration/password_change_do
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
 
+def search(request):
 
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+    return render(request, 'rango/search.html', {'result_list': result_list})
