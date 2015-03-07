@@ -1,6 +1,7 @@
 from django.contrib import admin
 from rango.models import Category, Page
 from rango.models import UserProfile
+from django.contrib.auth.models import User
 
 admin.site.register(UserProfile)
 
@@ -16,6 +17,10 @@ class PageAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'url')
 
 
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('username','website', 'picture','user')
+
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 

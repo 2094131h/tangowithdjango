@@ -5,6 +5,9 @@ from rango.models import Category, Page, UserProfile
 
 
 class UserForm(forms.ModelForm):
+    username = forms.CharField(max_length=30)
+    first_name = forms.CharField(max_length=30)
+    email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
@@ -13,6 +16,9 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    website = forms.URLField( help_text='website', required=False)
+    picture = forms.ImageField(help_text='picture', required=False)
+
     class Meta:
         model = UserProfile
         fields = ('website', 'picture')

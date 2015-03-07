@@ -3,8 +3,7 @@ from django.http import HttpResponse
 from rango.models import Page
 from rango.models import Category
 from rango.forms import CategoryForm
-from rango.forms import PageForm
-from rango.forms import UserForm, UserProfileForm
+from rango.forms import PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -15,9 +14,11 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, Set
 from django.views.decorators.csrf import csrf_protect
 from rango.bing_search import run_query
 
+
 @login_required
 def restricted(request):
     return render(request, 'rango/restricted.html', {})
+
 
 @login_required
 def add_category(request):
@@ -47,11 +48,10 @@ def add_category(request):
 
 @login_required
 def add_page(request, category_name_slug):
-
     try:
         cat = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
-                cat = None
+        cat = None
 
     if request.method == 'POST':
         form = PageForm(request.POST)
@@ -68,13 +68,12 @@ def add_page(request, category_name_slug):
     else:
         form = PageForm()
 
-    context_dict = {'form':form, 'category': cat}
+    context_dict = {'form': form, 'category': cat}
 
     return render(request, 'rango/add_page.html', context_dict)
 
 
 def index(request):
-
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
 
@@ -101,12 +100,9 @@ def index(request):
     if reset_last_visit_time:
         request.session['last_visit'] = str(datetime.now())
         request.session['visits'] = visits
-    context_dict['visits'] = visits
+        context_dict['visits'] = visits
 
-
-    response = render(request,'rango/index.html', context_dict)
-
-    return response
+    response = render(request, 'rango/index.html', context_dict)
 
     if reset_last_visit_time:
         response.set_cookie('last_visit', datetime.now())
@@ -126,6 +122,16 @@ def about(request):
 
 
 def category(request, category_name_slug):
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+        return render(request, 'rango/search.html', {'result_list': result_list})
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
@@ -175,31 +181,30 @@ def password_change(request,
             form.save()  # Updating the password logs out all other sessions for the user
             # except the current one
             # if # django.contrib.auth.middleware.SessionAuthenticationMiddleware
-            #  is enabled.
+            # is enabled.
             update_session_auth_hash(request, form.user)
             return HttpResponseRedirect(post_change_redirect)
     else:
         form = password_change_form(user=request.user)
         context = {
-             'form': form,
-             'title': _('Password change'),
-             }
+            'form': form,
+            'title': _('Password change'),
+        }
     if extra_context is not None:
         context.update(extra_context)
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
 
-
 @login_required
-def password_change_done(request, template_name='registration/password_change_done.html', current_app=None, extra_context=None):
-    context = { 'title': _('Password change successful'), }
+def password_change_done(request, template_name='registration/password_change_done.html', current_app=None,
+                         extra_context=None):
+    context = {'title': _('Password change successful'), }
     if extra_context is not None:
         context.update(extra_context)
     return TemplateResponse(request, template_name, context, current_app=current_app)
 
 
 def search(request):
-
     result_list = []
 
     if request.method == 'POST':
@@ -210,3 +215,63 @@ def search(request):
             result_list = run_query(query)
 
     return render(request, 'rango/search.html', {'result_list': result_list})
+
+
+def track_url(request):
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            page = Page.objects.get(id=page_id)
+            page.views += 1
+            page.save()
+        return HttpResponseRedirect(page.url)
+
+
+@login_required
+def add_profile(request):
+    context_dict = {}
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            if request.user:
+                user = request.user
+                profile = form.save(commit=False)
+                profile.user = user
+                profile.save()
+                # probably better to use a redirect here.
+            return HttpResponseRedirect('/rango/')
+        else:
+            print form.errors
+    else:
+        form = UserProfileForm
+        context_dict = {'form':form }
+
+    return render(request, 'rango/profile_registration.html', context_dict)
+
+@login_required
+def profile(request):
+    context_dict = {}
+    if request.method == 'POST':
+        if request.user:
+            user = request.user
+            user.username = request.POST['username']
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.email = request.POST['email']
+            user.profile.website = request.POST['website']
+            user.profile.picture = request.POST['picture']
+            user.save()
+            user.profile.save()
+                # probably better to use a redirect here.
+            return HttpResponseRedirect('/rango/profile_saved/')
+        else:
+            print form.errors
+    # else:
+    #     form = UserProfileForm
+    #     context_dict = {'form':form }
+
+    return render(request, 'rango/profile.html', context_dict)
+
+
+def profile_saved(request):
+    return render(request, 'rango/profile_saved.html')
