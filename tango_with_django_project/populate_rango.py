@@ -40,7 +40,7 @@ def populate():
 
     add_page(cat=python_cat,
         title="How to Think like a Computer Scientist",
-        url="http://www.greenteapress.com/thinkpython/")
+        url="http://www.greenteapress.com/thinkpython/",views=0)
 
 
     django_cat = add_cat("Django", 64, 32)
